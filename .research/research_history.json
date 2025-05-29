@@ -27,5 +27,39 @@
   },
   "add_queries": [
     "vision"
+  ],
+  "generated_queries": [
+    "diffusion theory",
+    "backdoor attack",
+    "data poisoning",
+    "visual semantics",
+    "generative models"
+  ],
+  "add_github_urls": [
+    "https://github.com/PKU-ML/TERD"
+  ],
+  "add_method_texts": [
+    {
+      "arxiv_id": "2409.05294v1",
+      "arxiv_url": "http://arxiv.org/abs/2409.05294v1",
+      "title": "TERD: A Unified Framework for Safeguarding Diffusion Models Against\n  Backdoors",
+      "authors": [
+        "Yichuan Mo",
+        "Hui Huang",
+        "Mingjie Li",
+        "Ang Li",
+        "Yisen Wang"
+      ],
+      "published_date": "2024-09-09T03:02:16Z",
+      "journal": "",
+      "doi": "",
+      "summary": "Diffusion models have achieved notable success in image generation, but they\nremain highly vulnerable to backdoor attacks, which compromise their integrity\nby producing specific undesirable outputs when presented with a pre-defined\ntrigger. In this paper, we investigate how to protect diffusion models from\nthis dangerous threat. Specifically, we propose TERD, a backdoor defense\nframework that builds unified modeling for current attacks, which enables us to\nderive an accessible reversed loss. A trigger reversion strategy is further\nemployed: an initial approximation of the trigger through noise sampled from a\nprior distribution, followed by refinement through differential multi-step\nsamplers. Additionally, with the reversed trigger, we propose backdoor\ndetection from the noise space, introducing the first backdoor input detection\napproach for diffusion models and a novel model detection algorithm that\ncalculates the KL divergence between reversed and benign distributions.\nExtensive evaluations demonstrate that TERD secures a 100% True Positive Rate\n(TPR) and True Negative Rate (TNR) across datasets of varying resolutions. TERD\nalso demonstrates nice adaptability to other Stochastic Differential Equation\n(SDE)-based models. Our code is available at https://github.com/PKU-ML/TERD.",
+      "github_url": "https://github.com/PKU-ML/TERD",
+      "main_contributions": "The paper introduces TERD, a novel backdoor defense framework for diffusion models. TERD provides a unified modeling approach for existing backdoor attacks, enabling the derivation of a reversed loss. It incorporates a trigger reversion strategy and introduces a backdoor detection method in the noise space, including input and model detection algorithms using KL divergence. The framework demonstrates high true positive and negative rates across various datasets and adaptability to SDE-based models.",
+      "methodology": "TERD employs a two-stage trigger reversion process: initial trigger estimation using noise from a prior distribution, followed by refinement via differential multi-step samplers. Backdoor detection is performed in the noise space, comparing the distributions of reversed triggers and benign inputs using Kullback-Leibler (KL) divergence.",
+      "experimental_setup": "Experiments were conducted on CIFAR-10, CelebA, and CelebA-HQ datasets. The defense was evaluated against BadDiffusion, TrojDiff, and VillanDiffusion attacks. Performance was measured using L2 norm between reversed and original triggers, True Positive Rate (TPR), and True Negative Rate (TNR).",
+      "limitations": "The paper does not explicitly state the limitations of the proposed approach. However, the adaptive attack experiments show a degradation in performance when the scaling factor η is extremely low for TrojDiff, suggesting a potential vulnerability when the benign and backdoor distributions have a large overlap.",
+      "future_research_directions": "The paper suggests that TERD, including trigger reversion and backdoor detection, can serve as a foundation for improving backdoor robustness in diffusion models. Further research could explore the scalability of TERD to more complex diffusion architectures and investigate defenses against adaptive attacks that more effectively blend benign and backdoor distributions."
+    }
   ]
 }
