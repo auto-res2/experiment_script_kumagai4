@@ -1,1 +1,7 @@
-airas-template
+# Dual-Space Disentanglement and Reversion for Robust Backdoor Defense
+> ⚠️ **NOTE:** This research is an automatic research using AIRAS.
+## Abstract
+This paper addresses the challenge of backdoor attacks in text-to-image diffusion models, where maliciously embedded triggers can cause unauthorized content generation, including copyrighted imagery. We focus on overcoming a key limitation of existing approaches such as SilentBadDiffusion, which rely on pixel-level or semantic fragment insertion but offer insufficient detection and mitigation at inference. We propose Dual-Space Disentanglement and Reversion (DSDR), a new method that operates jointly in the semantic (image) domain and the latent-noise space. DSDR encodes small but critical fragments of copyrighted data in noise signatures, then monitors them during inference. It can detect subtle triggers by measuring the KL divergence from benign noise distributions and revert suspicious noise patterns. We verify the method’s effectiveness through controlled backdoor embedding, quality assessment, and an ablation study. Experimental results show that DSDR not only reduces successful backdoor activations but also preserves image fidelity, helping protect diffusion models from unauthorized modifications while maintaining broad applicability in text-to-image generation.
+
+- [Research history](https://github.com/auto-res2/experiment_script_kumagai4/blob/develop_kumagai/.research/research_history.json)
+- [Devin execution log](https://app.devin.ai/sessions/92580d72fec843f2b12815f42da1b122)
