@@ -28,5 +28,41 @@
   },
   "add_queries": [
     "vision"
+  ],
+  "generated_queries": [
+    "efficient coding",
+    "natural statistics",
+    "texture correlations",
+    "psychophysical thresholds",
+    "variance salience"
+  ],
+  "add_github_urls": [
+    "https://github.com/xcmyz/FastSpeech"
+  ],
+  "add_method_texts": [
+    {
+      "arxiv_id": "2407.09370v2",
+      "arxiv_url": "http://arxiv.org/abs/2407.09370v2",
+      "title": "Learning High-Frequency Functions Made Easy with Sinusoidal Positional\n  Encoding",
+      "authors": [
+        "Chuanhao Sun",
+        "Zhihang Yuan",
+        "Kai Xu",
+        "Luo Mai",
+        "N. Siddharth",
+        "Shuo Chen",
+        "Mahesh K. Marina"
+      ],
+      "published_date": "2024-07-12T15:51:53Z",
+      "journal": "",
+      "doi": "",
+      "summary": "Fourier features based positional encoding (PE) is commonly used in machine\nlearning tasks that involve learning high-frequency features from\nlow-dimensional inputs, such as 3D view synthesis and time series regression\nwith neural tangent kernels. Despite their effectiveness, existing PEs require\nmanual, empirical adjustment of crucial hyperparameters, specifically the\nFourier features, tailored to each unique task. Further, PEs face challenges in\nefficiently learning high-frequency functions, particularly in tasks with\nlimited data. In this paper, we introduce sinusoidal PE (SPE), designed to\nefficiently learn adaptive frequency features closely aligned with the true\nunderlying function. Our experiments demonstrate that SPE, without\nhyperparameter tuning, consistently achieves enhanced fidelity and faster\ntraining across various tasks, including 3D view synthesis, Text-to-Speech\ngeneration, and 1D regression. SPE is implemented as a direct replacement for\nexisting PEs. Its plug-and-play nature lets numerous tasks easily adopt and\nbenefit from SPE.",
+      "github_url": "https://github.com/xcmyz/FastSpeech",
+      "main_contributions": "The paper introduces Sinusoidal Positional Encoding (SPE), a novel positional encoding method that learns adaptive frequency features aligned with the underlying function. It addresses the limitations of existing positional encodings (PEs) that require manual hyperparameter tuning and struggle with learning high-frequency functions, especially with limited data. The key finding is that SPE consistently achieves enhanced fidelity and faster training across various tasks without hyperparameter tuning.",
+      "methodology": "SPE augments PE with periodic activation functions, making the number and frequencies of Fourier series trainable and adaptive to inputs. It uses a sinusoidal activation function after the traditional positional encoding to allow the network to learn the optimal frequency features. The method can be implemented as a direct replacement for existing PEs.",
+      "experimental_setup": "The paper evaluates SPE on 3D view synthesis (NeRF), Text-to-Speech generation (FastSpeech), and 1D regression with neural tangent kernel (NTK). For NeRF, the Blender dataset is used. Performance is measured using PSNR, SSIM, Wavelet Decomposition Power Ratio (WDPR), and Relative Wasserstein Distance Error (RWDE).",
+      "limitations": "The paper does not explicitly discuss limitations of the SPE method itself. However, it implicitly acknowledges that the effectiveness of SPE, like other neural network techniques, depends on the architecture of the MLP and the number of parameters.",
+      "future_research_directions": "The paper suggests potential for exploring other periodic activation functions and network architectures to further enhance the performance of SPE. Also, the use of GANs to further refine the results from SPE-enhanced NeRF models are worth further investigation."
+    }
   ]
 }
