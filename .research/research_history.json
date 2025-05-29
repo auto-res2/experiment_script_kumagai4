@@ -25,5 +25,8 @@
     "experimental_setup": "The UPenn Natural Image Database and van Hateren database are used for natural image analysis. Synthetic grayscale textures with three luminance levels (black, gray, light) are generated using a Markov process to control the correlations. A four-alternative forced-choice paradigm is used in the psychophysical experiments, and thresholds are determined by fitting a Weibull function to the subject's performance.",
     "limitations": "The study acknowledges that the efficient-coding model has limitations, as indicated by systematic discrepancies between natural-image predictions and measured thresholds, particularly underestimation in simple planes and overestimation in mixed planes. The preprocessing pipeline reduces the dark-light asymmetry present in natural images, potentially affecting the results. The model also assumes linearity, which may not fully capture the complexities of visual processing.",
     "future_research_directions": "Future research directions include exploring the limits of texture adaptation by considering the cost-benefit trade-offs of efficiently coding increasingly complex environmental statistics. The authors suggest investigating non-linear transformations of natural-image variances to improve the model's accuracy. Generalizing the construction to larger numbers of gray levels and correlations over greater distances is also mentioned."
-  }
+  },
+  "add_queries": [
+    "vision"
+  ]
 }
