@@ -1,0 +1,27 @@
+{
+    "device": "auto",
+    "batch_size": 10,
+    "embedding_size": 10,
+    "learning_rate": 0.001,
+    "epochs": 20,
+    "texture_size": [
+        128,
+        128
+    ],
+    "imbalance_factor": 0.3,
+    "scales": [
+        1.0,
+        0.5,
+        0.25
+    ],
+    "frequencies": [
+        3,
+        5,
+        7,
+        10
+    ],
+    "random_seed": 42,
+    "output_dir": ".",
+    "natural_images_dir": "data/natural_images",
+    "status_enum": "stopped"
+}
