@@ -1,1 +1,7 @@
-airas-template
+# Adaptive Sinusoidal Encodings for Variance-Based Texture Analysis
+> ⚠️ **NOTE:** This research is an automatic research using AIRAS.
+## Abstract
+We introduce a nonlinear framework for grayscale texture discrimination that augments the established variance-is-salience principle with adaptive sinusoidal encodings. By preserving dark–light asymmetries in preprocessing and allowing a neural model to learn high-frequency features end-to-end, our method aims to capture subtle correlations often missed by purely linear variance-based approaches. The key contribution is an adaptive sinusoidal module that learns frequency parameters in order to highlight discriminative texture cues, guided by the insight that higher-order correlations matter for real-world images. We validate this framework on synthetic textures, controlled frequency analyses, and natural images. While a direct comparison with simulated thresholds for synthetic textures finds that the base linear approach can match or exceed performance in simplistic scenarios, our experiments confirm that the sinusoidal mechanism yields meaningful frequency embeddings and better represents complex or asymmetrical scene statistics. Ultimately, we propose that combining adaptive high-frequency sensitivity with the variance principle has the potential to bring model predictions closer to human-like texture discrimination for real-world scenes.
+
+- [Research history](https://github.com/auto-res2/experiment_script_kumagai4/blob/develop_kumagai2/.research/research_history.json)
+- [Devin execution log](https://app.devin.ai/sessions/b02857d2f3df414fa1a9717b727577e8)
