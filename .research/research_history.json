@@ -24,5 +24,8 @@
     "experimental_setup": "Experiments were conducted using Stable Diffusion (SD) versions 1.1 to 1.5, fine-tuned on poisoned datasets. The Pokemon BLIP Captions dataset and subsets of LAION Aesthetics v2 6.5+ and COYO-700m datasets were used as clean datasets. Midjourney v5 data was used as copyrighted material. The effectiveness of the attack was measured by Copyright Infringement Rate (CIR) and First-Attack Epoch (FAE), with Self Supervised Copy Detection (SSCD) used to detect substantial similarity.",
     "limitations": "The approach assumes that copyright images are decomposable into distinct elements. The study acknowledges the potential for discrepancies between SSCD outcomes and human judgment in assessing substantial similarity. The method's effectiveness may vary depending on the specific architecture and training of the diffusion model.",
     "future_research_directions": "Future research could focus on a broader range of targets beyond decomposable images, leveraging optimization techniques to integrate copyright information by updating pixel-wise values of training data. Other areas include exploring style-attack and multiple-backdoors attack scenarios, as well as theoretical investigations into the memorization mechanisms of diffusion models."
-  }
+  },
+  "add_queries": [
+    "vision"
+  ]
 }
