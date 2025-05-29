@@ -1,0 +1,193 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Research Paper</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      margin: 2rem auto;
+      max-width: 800px;
+      padding: 0 1rem;
+      line-height: 1.6;
+      color: #333;
+      background-color: #fff;
+    }
+    h2.paper-title {
+      font-size: 1.8em;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 0.5em;
+      border-bottom: none;
+    }
+    h2 {
+      border-bottom: 2px solid #ddd;
+      padding-bottom: 0.3em;
+      margin-top: 2em;
+    }
+    pre {
+      background: #f6f8fa;
+      padding: 1em;
+      overflow: auto;
+      border-radius: 5px;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, monospace;
+    }
+    ul {
+      padding-left: 1.5em;
+    }
+    figure {
+      text-align: center;
+      margin: 1.5em 0;
+      background: none !important;
+    }
+    img {
+      background: #fff;
+    }
+    figure img {
+      display: block;
+      margin: 0 auto;
+      max-width: 100%;
+      height: auto;
+    }
+    .img-pair .pair {
+      display: flex;
+      justify-content: space-between;
+    }
+    .img-pair img {
+      max-width: 48%;
+      height: auto;
+    }
+    figcaption {
+      font-size: 0.9em;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+<h2 class="paper-title">Dual-Space Disentanglement and Reversion for Robust Backdoor Defense</h2>
+
+<section>
+  <h2>Abstract</h2>
+  <p>This paper addresses the challenge of backdoor attacks in text-to-image diffusion models, where maliciously embedded triggers can cause unauthorized content generation, including copyrighted imagery. We focus on overcoming a key limitation of existing approaches such as SilentBadDiffusion, which rely on pixel-level or semantic fragment insertion but offer insufficient detection and mitigation at inference.</p>
+  <p>We propose Dual-Space Disentanglement and Reversion (DSDR), a new method that operates jointly in the semantic (image) domain and the latent-noise space. DSDR encodes small but critical fragments of copyrighted data in noise signatures, then monitors them during inference. It can detect subtle triggers by measuring the KL divergence from benign noise distributions and revert suspicious noise patterns.</p>
+  <p>We verify the method’s effectiveness through controlled backdoor embedding, quality assessment, and an ablation study. Experimental results show that DSDR not only reduces successful backdoor activations but also preserves image fidelity, helping protect diffusion models from unauthorized modifications while maintaining broad applicability in text-to-image generation.</p>
+</section>
+
+<section>
+  <h2>Introduction</h2>
+  <p>Generative artificial intelligence has experienced remarkable growth in recent years, especially in text-to-image diffusion models (DMs). These models are now widely available through online services and commercial platforms, raising concerns about intellectual property rights, privacy leaks, and malicious manipulations of model behaviors. Among such concerns, backdoor attacks stand out: attackers subtly embed triggers into the training pipeline so that, when targeted prompts are used during inference, the model outputs content that violates certain protections or reveals hidden information.</p>
+  <p>Recent research on SilentBadDiffusion illustrates the gravity of such backdoor threats. By carefully injecting pieces of copyrighted images in training data, this approach can link references to copyrighted material with benign text prompts, thus enabling the re-generation of protected content. However, these methods depend strongly on controlling either fine-tuning stages or injecting consistent pixel modifications, and they often assume that disentangling attacks relies on only one or two metrics (like a similarity measure). In practice, advanced diffusion models have more complex internal structures that can circumvent simplistic detection methods. The phenomenon that "the more sophisticated the DMs are, the easier the success of the attack becomes" underscores how stealthy attackers take advantage of the model’s large capacity.</p>
+  <p>In this paper, we propose a method that builds upon the strengths of prior work, specifically leveraging the idea of segmenting protected content and embedding it subtly. Yet we expand to dual-space detection by introducing the concept of noise-space triggers and a continuous reversion process. This new framework, called Dual-Space Disentanglement and Reversion (DSDR), aims to address core vulnerabilities of existing solutions.</p>
+  <p>We summarize the primary objectives and contributions of this work as follows:</p>
+  <ul>
+    <li><strong>Dual-space identification:</strong> We formalize a dual-space approach for identifying, suppressing, or removing backdoor triggers, combining semantic-level disentanglement with robust latent-noise analysis.</li>
+    <li><strong>Noise-based reversion:</strong> We design a noise-based trigger reversion mechanism that continually monitors the KL divergence between a model’s latent states and a reference "benign" distribution. Suspicious triggers can be isolated and reverted before they cause infringing content.</li>
+    <li><strong>Comprehensive experiments:</strong> We present a comprehensive set of experiments to demonstrate the reliability of DSDR. By comparing to baseline approaches, including SilentBadDiffusion-style methods, we showcase improved detection rates and negligible impact on normal image generation.</li>
+    <li><strong>Path for extensions:</strong> We provide an outline for extending DSDR to more complex attacks, including scenarios where images cannot be neatly decomposed or where multiple types of copyrighted fragments appear.</li>
+  </ul>
+  <p>We structure the remainder of the paper in several sections. We begin by reviewing related backdoor attack and defense methods in the literature. Next, we detail relevant background concepts, including how text-to-image diffusion pipelines operate and how earlier poisoning methods exploit these pipelines. We then describe our DSDR approach in detail, followed by an account of the experimental setups and their implementation specifics. Afterward, we present results, discussing the key findings, limitations, and directions for future research. Finally, our conclusions recap the main insights of this study and the potential for broader extensions of the proposed technique.</p>
+</section>
+
+<section>
+  <h2>Related Work</h2>
+  <p>Backdoor attacks against machine learning models have been widely investigated across various domains, such as image classification, speech recognition, and language modeling. Typical strategies rely on inserting triggers into training data so that the network learns to associate specific cues with adversarial outputs. In diffusion-based generative models, backdoors represent a unique challenge: the generative process inherently involves sampling from a noise space, and the prompt-based conditioning can be exploited for surreptitious triggers.</p>
+  <p>Prior works on diffusion backdoors often adopt pixel-level manipulations, where an attacker modifies training images or modifies textual embeddings to embed malicious signals. These triggers can be a small visible patch, an imperceptible noise pattern, or even a distribution-shifted style that the model memorizes. The method known as SilentBadDiffusion, for instance, hides pieces of copyrighted images across multiple training samples, linking them to certain text prompts so that the model eventually regurgitates copyrighted material at inference time.</p>
+  <p>Attacks that embed triggers in generative models differ from classification backdoors in two main ways. First, there is a higher risk of intellectual property or privacy infringement: generative models can recreate sensitive data once triggered, rather than simply labeling an input incorrectly. Second, detecting these triggers generally requires a deeper understanding of how the generative process unfolds in noise space. While some defenses focus on scanning model outputs using perceptual similarity detectors (e.g., measuring structural similarities to known content), such approaches can fail if the copyrighted fragments are semantically recombined in subtle ways.</p>
+  <p>Backdoor detection strategies typically rely on either data-level examination, model-level analysis, or inference-time monitoring. Data-level methods attempt to locate suspicious representational shifts in the training set, but may be blind to triggers injected at scale or triggers that are too dispersed to stand out. Model-level analysis can examine latent representation distributions for anomalies, but must adapt to the complexity of large diffusion architectures. Inference-time defenses often track statistics of outputs; if anomalies or known triggered patterns are present, post-hoc corrections can be applied.</p>
+  <p>Our proposed method, DSDR, builds on these lines of research but integrates them more comprehensively by combining the semantic segmentation and inpainting ideas from SilentBadDiffusion with a noise-level reversion mechanism reminiscent of existing detection strategies. By assigning each semantic fragment a latent noise “signature,” DSDR ensures that the model’s generation path must pass through these concealed triggers. Meanwhile, the system continually compares sampled latent distributions to a reference. This dual approach aims at both detecting and mitigating triggered content, addressing the shortcomings of purely semantic or purely noise-oriented solutions.</p>
+</section>
+
+<section>
+  <h2>Background</h2>
+  <p>Diffusion models have gained prominence by generating high-quality images based on iterative denoising processes, guided by textual or other conditional inputs. The typical pipeline starts with a random noise vector, which is gradually refined until it matches the distribution learned from the training data. In text-to-image diffusion, user-provided prompts act as conditions to steer the generation in a desired direction, deriving semantic structure from transformer-based or CNN-based encoders.</p>
+  <p>Because generative power depends on a large body of training data, these models can inadvertently memorize or reproduce undesirable patterns. In the context of copyright infringement or private data leaks, such memorization is not merely a theoretical risk—it can be weaponized. SilentBadDiffusion is a notable example in which copyrighted images are dissected into segments (e.g., using semantic segmentation) and then scattered across multiple images and text references. By training on this poisoned dataset, the model implicitly ties seemingly harmless text prompts to copyrighted visual patterns.</p>
+  <p>A crucial factor is that advanced diffusion models use highly flexible latent representations, making them potent enough to “remember” minute details. Even if the fragments are well dispersed, the model can piece them together when encountering specific instructions. The difficulty in selectively removing these backdoor triggers stems from the generative pipeline’s multi-step process—a small latent difference can yield large output changes.</p>
+  <p>Formally, we can view a diffusion process as sampling x₀ from p(x₀). The model iteratively refines xₜ into xₜ₋₁ by removing noise, guided by parameters learned during training. For a backdoor to succeed, an attacker wants an adversarial distribution p*(x₀) that significantly influences the training process. The attacker pairs (x₀, c) so that whenever c is used, x₀’s factors reappear in the generation. If multiple such pairs exist, removing or detecting them is challenging. In response, DSDR introduces an additional step of monitoring the hidden noise embeddings during the sampling process. By tracking how xₜ correlates with a benign reference distribution, we can isolate suspicious patterns and revert them.</p>
+  <p>Additionally, most backdoor strategies require either direct access to training pipelines or to the dataset used for fine-tuning. Efforts like SilentBadDiffusion highlight that even a small poison ratio can compromise the entire model. This underscores a major vulnerability: the more powerful and general a diffusion model, the more readily it can be coerced into reproducing embedded content. Thus, DSDR’s impetus is to integrate detection and reversion in both the data domain (semantic space) and the noise domain, improving upon purely data-centric or purely inference-level backdoor defenses.</p>
+</section>
+
+<section>
+  <h2>Method</h2>
+  <p>We introduce Dual-Space Disentanglement and Reversion (DSDR) as a unified mechanism to detect and neutralize silent backdoor triggers in text-to-image diffusion models. Our approach works in two primary phases—embedding and reversion—while leveraging formalism from the problem setting discussed in the Background.</p>
+  <p><strong>1) Overall Framework</strong><br />DSDR builds on the concept of semantically decomposing a protected image into salient components, much like in SilentBadDiffusion. However, we extend this methodology by linking each visual fragment to a corresponding noise signature. Rather than simply pasting a latent patch, DSDR creates a distributed noise pattern that is unobtrusive. At training time, if the model learns to associate a protected component with a particular code in noise space, it can later regenerate it only when that noise code reappears.</p>
+  <p><strong>2) Dual-Space Disentanglement</strong></p>
+  <p>(a) Semantic Decomposition: In practice, we utilize an automated segmentation toolkit to extract the key elements of an image (outline, texture pieces, background, etc.). For copyrighted material, we treat each fragment as a separate entity. These fragments can represent distinct visual components or even smaller style elements.</p>
+  <p>(b) Latent Anchoring: Each fragment is then associated with a “signature” in latent-noise space, determined by an encoder that merges the fragment’s features into a noise vector. This vector is spread across the entire latent space so that it is difficult to identify as a single visual patch.</p>
+  <p>The essence of disentanglement is to keep semantic reconstructions fully dependent on concurrently matching the visual fragment and its noise signature. If either is missing, the backdoor injection fails. Consequently, the attacker’s triggers are made less evident, but any prompt specifically designed to reactivate the noise signature can still yield the copyrighted content.</p>
+  <p><strong>3) Trigger Reversion and Monitoring</strong><br />During inference, DSDR observes the generation process. Specifically, we:</p>
+  <ul>
+    <li><strong>Reverse-sample:</strong> A small batch of images is generated from random Gaussian noise as usual. However, each intermediate noise vector is checked against a reference distribution centered on typical benign usage.</li>
+    <li><strong>KL-Divergence–Guided Correction:</strong> We measure the KL divergence between the current noise distribution and the benign distribution to see if suspicious triggers are forming. If the divergence exceeds a threshold (indicating an unusual presence of a known noise signature), a reversion step is performed. Through multiple iterations, we “push” the noise codes back toward safe territory, suppressing the trigger.</li>
+    <li><strong>Continuous Monitoring:</strong> At every time step, the system updates an internal record of potential trigger patterns. If the same pattern reappears across multiple iterations or multiple prompts, DSDR classifies it more confidently as malicious and continues reversion. This approach combines detection and neutralization as a single loop rather than two separate processes.</li>
+  </ul>
+  <p><strong>4) Advantages</strong></p>
+  <ul>
+    <li><strong>Flexible across Complex Images:</strong> When images are decomposable, we can precisely isolate fragments. For less decomposable images, the noise signature still carries the essential trigger. Either way, the method is robust because it does not rely solely on visible insertion for triggers.</li>
+    <li><strong>Unified Detection-Prevention Pipeline:</strong> Rather than first detecting a malicious pattern and then handing off to another method, DSDR integrates them. The reversion process is triggered as soon as suspicious noise anomalies are detected.</li>
+    <li><strong>Adaptable Control:</strong> By adjusting the KL-divergence threshold and the number of reversion iterations, users can strike a balance between prompt responsiveness and security, ensuring that normal generation remains unaffected while suspect distributions are corrected.</li>
+  </ul>
+  <p><strong>5) Potential Extensions</strong><br />We envision enhancing DSDR by introducing dynamic thresholding, especially in scenes with high semantic variability. Further, multi-modal triggers (e.g., across text, image, or audio) could be integrated so that suspicious signals from multiple modalities are collectively identified. Watermarking all non-reverted images is another practical step to indicate the model’s “clean bill of health,” making attempts to bypass this pipeline even more obvious. Overall, the unified noise- and semantic-based approach is poised to be robust against a wide variety of backdoor strategies.</p>
+  <pre><code>// Example pseudocode for the reversion mechanism (for illustration purposes only)
+for each inference_step {
+    noise = sample_noise()
+    divergence = compute_KL_divergence(noise, benign_distribution)
+    if (divergence > threshold) {
+        noise = revert_noise(noise);
+    }
+    image = generate_image(noise);
+}
+  </code></pre>
+</section>
+
+<section>
+  <h2>Experimental Setup</h2>
+  <p>We evaluate DSDR using three distinct experiments that compare its performance against baseline models, including a standard semantic segmentation approach and a SilentBadDiffusion-inspired pipeline. All experiments are implemented in Python, leveraging widely used frameworks such as PyTorch, torchvision, and scikit-image.</p>
+  <p><strong>Experiment 1: Controlled Backdoor Embedding and Inference</strong><br />Objective: Validate DSDR’s ability to detect and revert stealthy triggers.</p>
+  <p><strong>Data Generation:</strong> We create a synthetic dataset, drawing images from a public source like CIFAR-10 or a subset of ImageNet. A fraction of these images (for instance, 10%) is embedded with latent triggers, which simulate a backdoor insertion. Such triggers are small noise patterns introduced into the latent representations or lightly added to pixel data.</p>
+  <p><strong>Training:</strong> We train two different models: one baseline that does not use any reversion step, and the DSDR-augmented pipeline that monitors KL divergence and reverts suspicious noise. Each model is optimized with a reconstruction-based loss, loosely mimicking the objective in a text-to-image pipeline.</p>
+  <p><strong>Inference:</strong> We run reverse sampling from Gaussian noise and track anomalies via KL divergence. If the divergence is above a chosen threshold, DSDR attempts to revert it by pushing the latent vectors closer to a benign distribution. The main metrics here are trigger detection rate (true positives) and false negatives, reflecting how many triggers slip through.</p>
+
+  <p><strong>Experiment 2: Quality and Consistency Evaluation of Image Outputs</strong><br />Objective: Assess whether DSDR’s noise reversion influences overall generation quality.</p>
+  <p><strong>Setup:</strong> We provide a set of prompts, some benign and others intended to activate triggers. For each prompt, both the baseline and DSDR model generate images.</p>
+  <p><strong>Evaluation Metrics:</strong> We compute standard image quality measures such as FID (Fréchet Inception Distance) to approximate the difference between generated and real data distributions, and SSIM (Structural Similarity Index) to capture pixel-level fidelity.</p>
+  <p><strong>Procedure:</strong> By generating images across multiple prompts, we compare how frequently the baseline might yield triggered or poisoned content versus DSDR’s reverted outputs. We also measure any degradation in non-trigger images by checking if FID or SSIM is significantly impacted.</p>
+
+  <p><strong>Experiment 3: Ablation Study on KL-Divergence Threshold and Reversion Steps</strong><br />Objective: Investigate the trade-off between detection aggressiveness and maintaining image quality.</p>
+  <p><strong>Setup:</strong> We define a grid of hyperparameters: KL-threshold values (e.g., 0.05, 0.1, 0.15, 0.2) and the number of reversion iterations (1, 3, 5, or more).</p>
+  <p><strong>Method:</strong> We analyze how each configuration affects average detection rates, average reconstruction loss, and inference times. By systematically varying these parameters, we uncover the right balance in which triggers are reliably caught while benign content remains unaffected. All metrics are logged using CSV or TensorBoard.</p>
+  <p><strong>Implementation Details and Code:</strong> All experiments are contained within a single Python script named <code>dsdr_experiments.py</code>. This script handles synthetic dataset creation, model training, inference monitoring, and metric computations using standard PyTorch functionalities along with libraries such as torchmetrics and scikit-image.</p>
+</section>
+
+<section>
+  <h2>Results</h2>
+  <p>Our results cover the full spectrum of detection rates, image quality, and hyperparameter sensitivities, demonstrating the advantages of DSDR over simpler baselines and SilentBadDiffusion-like methods.</p>
+  <p><strong>1) Trigger Detection and Reversion Analysis:</strong> Experiment 1 shows that the DSDR-augmented models detect and revert significantly more of the embedded triggers than the baseline approach. Under typical poison ratios (about 10% in our synthetic dataset), the baseline model exhibits more frequent activation of malicious patterns, leading to undesired or copyrighted imagery. In contrast, the presence of the KL-divergence monitor and iterative noise reversion in DSDR substantially lowers the rate of successful attacks.</p>
+  <p><strong>2) Image Fidelity and Consistency:</strong> From Experiment 2, we measured FID and SSIM for images generated by both models under the same prompts. On benign inputs, DSDR’s outputs were comparable in quality to the baseline, indicating that the additional reversion steps do not hinder normal generation. For backdoor triggers, DSDR yields images with fewer suspicious artifacts and a distribution more closely aligned with clean data.</p>
+  <p>The following figures summarize these findings:</p>
+  <figure>
+    <img src="images/training_loss.png" style="width:70%;height:auto" alt="Training Loss Over Time">
+    <figcaption>Figure 1: Training Loss Over Time (training_loss.png)</figcaption>
+  </figure>
+  <figure>
+    <img src="images/quality_metrics.png" style="width:70%;height:auto" alt="Quality Metrics Comparison">
+    <figcaption>Figure 2: Quality Metrics Comparison (quality_metrics.png)</figcaption>
+  </figure>
+  <figure>
+    <img src="images/ablation_kl.png" style="width:70%;height:auto" alt="Ablation Study Results">
+    <figcaption>Figure 3: Ablation Study Results (ablation_kl.png)</figcaption>
+  </figure>
+  <p><strong>3) Extended Observations and Limitations:</strong> Our approach retains certain assumptions, such as the adequacy of using a distribution-based measure like KL divergence to distinguish benign from malicious patterns. Additionally, part of the method relies on image decomposability. While the approach works best when triggers remain consistent across training samples, more advanced or adaptively changing triggers might require additional refinements.</p>
+  <p>Overall, the experiments strongly suggest that integrating semantic and noise spaces within a single detection and reversion pipeline provides a more resilient defense, with flexible hyperparameter configurations that can adapt to various attack scenarios.</p>
+</section>
+
+<section>
+  <h2>Conclusions</h2>
+  <p>We have introduced Dual-Space Disentanglement and Reversion (DSDR) as a systematic approach to preventing stealthy backdoor attacks in text-to-image diffusion models. By jointly addressing semantic fragmentation and noise-based triggers, DSDR can swiftly detect and revert malicious embeddings without degrading the normal generative capabilities of the model.</p>
+  <p>Our experiments showed that DSDR outperforms simpler baselines in detecting and suppressing triggers—even when only a small fraction of the training data is poisoned—and avoids noticeable quality loss in benign scenarios.</p>
+  <p>This work points to future directions, including expanding DSDR to non-decomposable content and diverse modalities, exploring adaptive thresholds, and refining iterative reversion protocols. Overall, DSDR is seen as a step toward safer diffusion pipelines that preserve creative freedom while mitigating risks of unauthorized content reproduction.</p>
+</section>
+</body>
+</html>
