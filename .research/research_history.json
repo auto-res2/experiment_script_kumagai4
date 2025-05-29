@@ -1,5 +1,28 @@
 {
   "base_queries": [
     "diffusion model"
-  ]
+  ],
+  "base_github_url": "https://github.com/haonan3/SilentBadDiffusion",
+  "base_method_text": {
+    "arxiv_id": "2401.04136v2",
+    "arxiv_url": "http://arxiv.org/abs/2401.04136v2",
+    "title": "The Stronger the Diffusion Model, the Easier the Backdoor: Data\n  Poisoning to Induce Copyright Breaches Without Adjusting Finetuning Pipeline",
+    "authors": [
+      "Haonan Wang",
+      "Qianli Shen",
+      "Yao Tong",
+      "Yang Zhang",
+      "Kenji Kawaguchi"
+    ],
+    "published_date": "2024-01-07T08:37:29Z",
+    "journal": "",
+    "doi": "",
+    "summary": "The commercialization of text-to-image diffusion models (DMs) brings forth\npotential copyright concerns. Despite numerous attempts to protect DMs from\ncopyright issues, the vulnerabilities of these solutions are underexplored. In\nthis study, we formalized the Copyright Infringement Attack on generative AI\nmodels and proposed a backdoor attack method, SilentBadDiffusion, to induce\ncopyright infringement without requiring access to or control over training\nprocesses. Our method strategically embeds connections between pieces of\ncopyrighted information and text references in poisoning data while carefully\ndispersing that information, making the poisoning data inconspicuous when\nintegrated into a clean dataset. Our experiments show the stealth and efficacy\nof the poisoning data. When given specific text prompts, DMs trained with a\npoisoning ratio of 0.20% can produce copyrighted images. Additionally, the\nresults reveal that the more sophisticated the DMs are, the easier the success\nof the attack becomes. These findings underline potential pitfalls in the\nprevailing copyright protection strategies and underscore the necessity for\nincreased scrutiny to prevent the misuse of DMs.",
+    "github_url": "https://github.com/haonan3/SilentBadDiffusion",
+    "main_contributions": "The paper formalizes the Copyright Infringement Attack on generative AI models, proposing a backdoor attack method called SilentBadDiffusion. This method strategically embeds connections between copyrighted information and text references in poisoning data to induce copyright infringement in text-to-image diffusion models without adjusting the fine-tuning pipeline. The research demonstrates that more sophisticated DMs are more susceptible to this attack.",
+    "methodology": "SilentBadDiffusion involves semantically dissecting a copyrighted image into elements and incorporating them into multiple images with corresponding text captions. This is achieved using a multi-modal large language model to identify salient parts of an image, a semantic segmentation model (GroundingDINO and SAM) to extract visual elements, and an inpainting model to create poisoning images. A Substantial Similarity Assessment Model (SSCD) is used to assess the similarity of the generated images.",
+    "experimental_setup": "Experiments were conducted using Stable Diffusion (SD) versions 1.1 to 1.5, fine-tuned on poisoned datasets. The Pokemon BLIP Captions dataset and subsets of LAION Aesthetics v2 6.5+ and COYO-700m datasets were used as clean datasets. Midjourney v5 data was used as copyrighted material. The effectiveness of the attack was measured by Copyright Infringement Rate (CIR) and First-Attack Epoch (FAE), with Self Supervised Copy Detection (SSCD) used to detect substantial similarity.",
+    "limitations": "The approach assumes that copyright images are decomposable into distinct elements. The study acknowledges the potential for discrepancies between SSCD outcomes and human judgment in assessing substantial similarity. The method's effectiveness may vary depending on the specific architecture and training of the diffusion model.",
+    "future_research_directions": "Future research could focus on a broader range of targets beyond decomposable images, leveraging optimization techniques to integrate copyright information by updating pixel-wise values of training data. Other areas include exploring style-attack and multiple-backdoors attack scenarios, as well as theoretical investigations into the memorization mechanisms of diffusion models."
+  }
 }
