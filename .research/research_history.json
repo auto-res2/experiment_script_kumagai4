@@ -1,5 +1,29 @@
 {
   "base_queries": [
     "coding"
-  ]
+  ],
+  "base_github_url": "https://github.com/ttesileanu/TextureAnalysis",
+  "base_method_text": {
+    "arxiv_id": "1912.05433v2",
+    "arxiv_url": "http://arxiv.org/abs/1912.05433v2",
+    "title": "Efficient coding of natural scene statistics predicts discrimination\n  thresholds for grayscale textures",
+    "authors": [
+      "Tiberiu Tesileanu",
+      "Mary M. Conte",
+      "John J. Briguglio",
+      "Ann M. Hermundstad",
+      "Jonathan D. Victor",
+      "Vijay Balasubramanian"
+    ],
+    "published_date": "2019-12-11T16:41:27Z",
+    "journal": "",
+    "doi": "",
+    "summary": "Previously, in (Hermundstad et al., 2014), we showed that when sampling is\nlimiting, the efficient coding principle leads to a \"variance is salience\"\nhypothesis, and that this hypothesis accounts for visual sensitivity to binary\nimage statistics. Here, using extensive new psychophysical data and image\nanalysis, we show that this hypothesis accounts for visual sensitivity to a\nlarge set of grayscale image statistics at a striking level of detail, and also\nidentify the limits of the prediction. We define a 66-dimensional space of\nlocal grayscale light-intensity correlations, and measure the relevance of each\ndirection to natural scenes. The \"variance is salience\" hypothesis predicts\nthat two-point correlations are most salient, and predicts their relative\nsalience. We tested these predictions in a texture-segregation task using\nun-natural, synthetic textures. As predicted, correlations beyond second order\nare not salient, and predicted thresholds for over 300 second-order\ncorrelations match psychophysical thresholds closely (median fractional error\n<0.13).",
+    "github_url": "https://github.com/ttesileanu/TextureAnalysis",
+    "main_contributions": "The study investigates the relationship between natural scene statistics and visual perception by testing the \"variance is salience\" hypothesis for grayscale textures. It defines a 66-dimensional space of local grayscale light-intensity correlations and demonstrates that human sensitivity to second-order correlations closely matches predictions derived from natural image statistics. The research also identifies invariances in psychophysical thresholds that reflect symmetries in natural images.",
+    "methodology": "The methodology involves analyzing natural images to quantify the variance of different grayscale texture correlations. Psychophysical experiments are conducted using a texture-segregation task with synthetic textures. Observers report the location of textured strips, and detection thresholds are measured. The predicted thresholds based on natural image statistics are compared with the psychophysical thresholds.",
+    "experimental_setup": "The UPenn Natural Image Database and van Hateren database are used for natural image analysis. Synthetic grayscale textures with three luminance levels (black, gray, light) are generated using a Markov process to control the correlations. A four-alternative forced-choice paradigm is used in the psychophysical experiments, and thresholds are determined by fitting a Weibull function to the subject's performance.",
+    "limitations": "The study acknowledges that the efficient-coding model has limitations, as indicated by systematic discrepancies between natural-image predictions and measured thresholds, particularly underestimation in simple planes and overestimation in mixed planes. The preprocessing pipeline reduces the dark-light asymmetry present in natural images, potentially affecting the results. The model also assumes linearity, which may not fully capture the complexities of visual processing.",
+    "future_research_directions": "Future research directions include exploring the limits of texture adaptation by considering the cost-benefit trade-offs of efficiently coding increasingly complex environmental statistics. The authors suggest investigating non-linear transformations of natural-image variances to improve the model's accuracy. Generalizing the construction to larger numbers of gray levels and correlations over greater distances is also mentioned."
+  }
 }
