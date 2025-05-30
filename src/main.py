@@ -27,9 +27,12 @@ def multi_objective_architecture_search():
             # Adjust width to be divisible by num_heads
             width = (width // num_heads) * num_heads
         
-        model = SampleTransformer(num_layers, width, num_heads)
-        
         device = 'cuda' if torch.cuda.is_available() else 'cpu'
+        print(f"    Evaluating model with layers={num_layers}, width={width}, heads={num_heads} on {device}")
+        
+        model = SampleTransformer(num_layers, width, num_heads)
+        model.to(device)  # Move model to the same device as input
+        
         dummy_input = create_synthetic_input(device=device)
         
         if torch.cuda.is_available():
@@ -117,30 +120,62 @@ def multi_objective_architecture_search():
 
 def test_all():
     """Run all experiments in sequence for a quick test."""
-    print("Starting experiments test...")
+    print("=" * 80)
+    print("STARTING ADAPTIVE ARCHITECTURE + MIXED-PRECISION EXPERIMENTS")
+    print("=" * 80)
+    print(f"PyTorch version: {torch.__version__}")
+    print(f"CUDA available: {torch.cuda.is_available()}")
+    if torch.cuda.is_available():
+        print(f"CUDA device: {torch.cuda.get_device_name(0)}")
+        print(f"CUDA memory: {torch.cuda.get_device_properties(0).total_memory / 1e9:.2f} GB")
+    print("=" * 80)
     
     os.makedirs("logs", exist_ok=True)
+    print("Created logs directory for experiment outputs")
     
     with open("logs/status.txt", "w") as f:
         f.write("status_enum: running\n")
+    print("Status set to 'running'")
+    print("=" * 80)
     
     best_candidate = multi_objective_architecture_search()
     
-    print("\n[Experiment 2] Mixed-Precision Fine-Tuning with Dynamic Precision Assignment")
+    print("\n" + "=" * 80)
+    print("[Experiment 2] Mixed-Precision Fine-Tuning with Dynamic Precision Assignment")
+    print("=" * 80)
+    print(f"Using best architecture from search: layers={best_candidate[0]}, width={best_candidate[1]}, heads={best_candidate[2]}")
+    
     num_layers, width, num_heads = best_candidate
     model = SampleTransformer(num_layers, width, num_heads)
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    print(f"Creating model and moving to {device}")
+    model.to(device)  # Ensure model is on the correct device
     dynamic_mixed_precision_experiment(model, device)
     
+    print("\n" + "=" * 80)
+    print("[Experiment 3] Inference Efficiency Under Varied Concurrency Conditions")
+    print("=" * 80)
+    print(f"Creating new model with same architecture: layers={best_candidate[0]}, width={best_candidate[1]}, heads={best_candidate[2]}")
     model = SampleTransformer(best_candidate[0], best_candidate[1], best_candidate[2])
+    model.to(device)  # Ensure model is on the correct device
     inference_efficiency_experiment(model, device)
     
     with open("logs/status.txt", "w") as f:
         f.write("status_enum: stopped\n")
     
-    print("\nAll experiments executed successfully.")
-    print("Status set to 'stopped'.")
-    print("PDF outputs saved in the logs directory.")
+    print("\n" + "=" * 80)
+    print("EXPERIMENT SUMMARY")
+    print("=" * 80)
+    print("All experiments executed successfully:")
+    print("  1. Multi-Objective Architecture Search - Complete")
+    print("  2. Mixed-Precision Fine-Tuning - Complete")
+    print("  3. Inference Efficiency Analysis - Complete")
+    print("\nPDF outputs saved in the logs directory:")
+    print("  - logs/training_cost_vs_latency.pdf")
+    print("  - logs/training_loss_comparison.pdf")
+    print("  - logs/inference_latency_vs_concurrency.pdf")
+    print("\nStatus set to 'stopped'")
+    print("=" * 80)
 
 if __name__ == '__main__':
     test_all()
