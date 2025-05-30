@@ -1,6 +1,6 @@
 import time
 import torch
-from torch.cuda.amp import autocast
+from torch.amp import autocast
 import numpy as np
 import matplotlib
 matplotlib.use('Agg')  # For saving figures as PDF without display
@@ -87,16 +87,31 @@ def inference_efficiency_experiment(model, device='cpu'):
             results[(bs, workers)] = avg_latency
             print(f"  Batch size: {bs}, Workers: {workers}, Average Latency: {avg_latency:.4f} sec")
     
-    fig = plt.figure(figsize=(8, 6))
-    ax = fig.add_subplot(projection='3d')
-    xs = [key[0] for key in results.keys()]
-    ys = [key[1] for key in results.keys()]
-    zs = [results[key] for key in results.keys()]
-    scatter = ax.scatter(xs, ys, zs, c='purple', marker='o')
-    ax.set_xlabel('Batch Size')
-    ax.set_ylabel('Concurrent Workers')
-    ax.set_zlabel('Avg. Inference Latency (sec)')
-    ax.set_title('Inference Latency vs. Concurrency Conditions')
+    plt.figure(figsize=(10, 8))
+    
+    batch_sizes_unique = sorted(list(set([key[0] for key in results.keys()])))
+    workers_unique = sorted(list(set([key[1] for key in results.keys()])))
+    
+    latency_matrix = np.zeros((len(batch_sizes_unique), len(workers_unique)))
+    for i, bs in enumerate(batch_sizes_unique):
+        for j, workers in enumerate(workers_unique):
+            if (bs, workers) in results:
+                latency_matrix[i, j] = results[(bs, workers)]
+    
+    plt.imshow(latency_matrix, cmap='viridis', aspect='auto')
+    plt.colorbar(label='Avg. Inference Latency (sec)')
+    
+    plt.xlabel('Concurrent Workers')
+    plt.ylabel('Batch Size')
+    plt.xticks(range(len(workers_unique)), workers_unique)
+    plt.yticks(range(len(batch_sizes_unique)), batch_sizes_unique)
+    
+    for i in range(len(batch_sizes_unique)):
+        for j in range(len(workers_unique)):
+            plt.text(j, i, f"{latency_matrix[i, j]:.4f}", 
+                     ha="center", va="center", color="white")
+    
+    plt.title('Inference Latency vs. Concurrency Conditions')
     plt.savefig("logs/inference_latency_vs_concurrency.pdf", bbox_inches="tight")
     plt.close()
     print("  Inference latency plot saved as 'logs/inference_latency_vs_concurrency.pdf'.")
