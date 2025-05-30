@@ -26,5 +26,37 @@
   },
   "add_queries": [
     "vision"
+  ],
+  "generated_queries": [
+    "scaling laws",
+    "inference cost",
+    "Newton method",
+    "model optimization",
+    "scaling extrapolation"
+  ],
+  "add_github_urls": [
+    "https://github.com/mosaicml/llm-foundry"
+  ],
+  "add_method_texts": [
+    {
+      "arxiv_id": "2501.18107v1",
+      "arxiv_url": "http://arxiv.org/abs/2501.18107v1",
+      "title": "Scaling Inference-Efficient Language Models",
+      "authors": [
+        "Song Bian",
+        "Minghao Yan",
+        "Shivaram Venkataraman"
+      ],
+      "published_date": "2025-01-30T03:16:44Z",
+      "journal": "",
+      "doi": "",
+      "summary": "Scaling laws are powerful tools to predict the performance of large language\nmodels. However, current scaling laws fall short of accounting for inference\ncosts. In this work, we first show that model architecture affects inference\nlatency, where models of the same size can have up to 3.5x difference in\nlatency. To tackle this challenge, we modify the Chinchilla scaling laws to\nco-optimize the model parameter count, the number of training tokens, and the\nmodel architecture. Due to the reason that models of similar training loss\nexhibit gaps in downstream evaluation, we also propose a novel method to train\ninference-efficient models based on the revised scaling laws. We perform\nextensive empirical studies to fit and evaluate our inference-aware scaling\nlaws. We vary model parameters from 80M to 1B, training tokens from 1.6B to\n30B, and model shapes, training a total of 63 models. Guided by our\ninference-efficient scaling law and model selection method, we release the\nMorph-1B model, which improves inference latency by 1.8x while maintaining\naccuracy on downstream tasks compared to open-source models, pushing the Pareto\nfrontier of accuracy-latency tradeoff.",
+      "github_url": "https://github.com/mosaicml/llm-foundry",
+      "main_contributions": "The paper addresses the problem of inference costs being disregarded by current scaling laws for large language models (LLMs). It introduces inference-efficient scaling laws that co-optimize model parameter count, training tokens, and model architecture. A novel method is proposed to train inference-efficient models based on the revised scaling laws, and the Morph-1B model is released, demonstrating improved inference latency while maintaining accuracy.",
+      "methodology": "The research modifies the Chinchilla scaling laws to incorporate model architecture considerations. It involves training multiple models with varying parameters, tokens, and shapes, then fitting the inference-efficient scaling laws using the Levenberg-Marquardt algorithm. A novel method is developed to rank model architectural choices based on loss predictions from scaling laws.",
+      "experimental_setup": "Experiments involved training over 60 models ranging from 80M to 1B parameters and 1.6B to 30B tokens. Models were evaluated on 11 downstream tasks used by Open-LM, and inference latency was measured on a single NVIDIA Ampere 40GB A100 GPU. The DCLM-Baseline dataset was used for training, and zero-shot evaluation was performed using LLM-foundry.",
+      "limitations": "The training was not scaled to include 7B models due to resource limitations. The scaling laws are based on specific model architectures and may not generalize to all architectures. The study also acknowledges that recently developed inference systems could introduce new trade-offs.",
+      "future_research_directions": "Future research directions include scaling training to larger models (e.g., 7B), exploring the impact of new inference systems and architectural optimizations (like MQA, GQA, MLA) on the accuracy-efficiency tradeoff, and further refining the scaling laws to account for these factors. The work also calls for designing language models with inference efficiency as a primary consideration."
+    }
   ]
 }
