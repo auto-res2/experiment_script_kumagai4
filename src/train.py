@@ -122,7 +122,16 @@ def dynamic_mixed_precision_experiment(model, device='cpu'):
     """
     from preprocess import dummy_data_loader
     
-    model.to(device)
+    print(f"  Moving model to {device} for mixed-precision training")
+    model = model.to(device)  # Reassign to ensure all submodules are moved
+    
+    model_device = next(model.parameters()).device
+    if str(model_device) != str(device):
+        print(f"  WARNING: Device mismatch! Requested {device} but model on {model_device}")
+        device = 'cpu'
+        model = model.to(device)
+        print(f"  Forced model to CPU device for compatibility")
+    
     optimizer = optim.Adam(model.parameters(), lr=1e-3)
     scaler = GradScaler('cuda' if device == 'cuda' else 'cpu')
     
