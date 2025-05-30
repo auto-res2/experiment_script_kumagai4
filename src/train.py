@@ -36,6 +36,10 @@ class SampleTransformer(nn.Module):
         Returns:
             Output tensor of shape (sequence length, batch size, vocab_size)
         """
+        # Ensure input is on the same device as model parameters
+        device = next(self.parameters()).device
+        x = x.to(device)
+        
         x = self.embedding(x)
         for layer in self.layers:
             x = layer(x)
