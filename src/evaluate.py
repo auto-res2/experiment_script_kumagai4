@@ -44,6 +44,7 @@ def simulate_inference(model, batch_size, num_requests, num_workers, device='cpu
     seq_len = 10
     vocab_size = 1000
     
+    print(f"  Creating synthetic input on {device} device")
     input_batch = create_synthetic_input(
         seq_len=seq_len, 
         batch_size=batch_size, 
@@ -51,7 +52,18 @@ def simulate_inference(model, batch_size, num_requests, num_workers, device='cpu
         device=device
     )
     
-    model.to(device)
+    print(f"  Moving model to {device} for inference")
+    model = model.to(device)  # Reassign to ensure all submodules are moved
+    
+    model_device = next(model.parameters()).device
+    input_device = input_batch.device
+    if str(model_device) != str(input_device):
+        print(f"  WARNING: Device mismatch detected! Model on {model_device}, input on {input_device}")
+        device = 'cpu'
+        model = model.to(device)
+        input_batch = input_batch.to(device)
+        print(f"  Forced both model and input to CPU device for compatibility")
+    
     model.eval()
     
     with ThreadPoolExecutor(max_workers=num_workers) as executor:
