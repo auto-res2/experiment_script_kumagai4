@@ -30,10 +30,19 @@ def multi_objective_architecture_search():
         device = 'cuda' if torch.cuda.is_available() else 'cpu'
         print(f"    Evaluating model with layers={num_layers}, width={width}, heads={num_heads} on {device}")
         
-        model = SampleTransformer(num_layers, width, num_heads)
-        model.to(device)  # Move model to the same device as input
-        
         dummy_input = create_synthetic_input(device=device)
+        input_device = dummy_input.device
+        
+        # Create model and explicitly move to the same device as input
+        model = SampleTransformer(num_layers, width, num_heads)
+        model = model.to(input_device)  # Reassign to ensure all submodules are moved
+        
+        model_device = next(model.parameters()).device
+        if str(model_device) != str(input_device):
+            print(f"    WARNING: Device mismatch detected! Model on {model_device}, input on {input_device}")
+            model = model.to('cpu')
+            dummy_input = dummy_input.to('cpu')
+            print(f"    Forced both model and input to CPU device for compatibility")
         
         if torch.cuda.is_available():
             torch.cuda.synchronize()
@@ -128,6 +137,11 @@ def test_all():
     if torch.cuda.is_available():
         print(f"CUDA device: {torch.cuda.get_device_name(0)}")
         print(f"CUDA memory: {torch.cuda.get_device_properties(0).total_memory / 1e9:.2f} GB")
+        torch.set_default_tensor_type('torch.cuda.FloatTensor')
+        print("Default tensor type set to CUDA for consistency")
+    else:
+        print("Running on CPU")
+        torch.set_default_tensor_type('torch.FloatTensor')
     print("=" * 80)
     
     os.makedirs("logs", exist_ok=True)
