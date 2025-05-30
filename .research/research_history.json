@@ -1,5 +1,27 @@
 {
   "base_queries": [
     "beyond"
-  ]
+  ],
+  "base_github_url": "https://github.com/mosaicml/composer",
+  "base_method_text": {
+    "arxiv_id": "2401.00448v3",
+    "arxiv_url": "http://arxiv.org/abs/2401.00448v3",
+    "title": "Beyond Chinchilla-Optimal: Accounting for Inference in Language Model\n  Scaling Laws",
+    "authors": [
+      "Nikhil Sardana",
+      "Jacob Portes",
+      "Sasha Doubov",
+      "Jonathan Frankle"
+    ],
+    "published_date": "2023-12-31T10:53:58Z",
+    "journal": "",
+    "doi": "",
+    "summary": "Large language model (LLM) scaling laws are empirical formulas that estimate\nchanges in model quality as a result of increasing parameter count and training\ndata. However, these formulas, including the popular Deepmind Chinchilla\nscaling laws, neglect to include the cost of inference. We modify the\nChinchilla scaling laws to calculate the optimal LLM parameter count and\npre-training data size to train and deploy a model of a given quality and\ninference demand. We conduct our analysis both in terms of a compute budget and\nreal-world costs and find that LLM researchers expecting reasonably large\ninference demand (~1B requests) should train models smaller and longer than\nChinchilla-optimal. Furthermore, we train 47 models of varying sizes and\nparameter counts to validate our formula and find that model quality continues\nto improve as we scale tokens per parameter to extreme ranges (up to 10,000).\nFinally, we ablate the procedure used to fit the Chinchilla scaling law\ncoefficients and find that developing scaling laws only from data collected at\ntypical token/parameter ratios overestimates the impact of additional tokens at\nthese extreme ranges.",
+    "github_url": "https://github.com/mosaicml/composer",
+    "main_contributions": "The paper addresses the limitations of existing LLM scaling laws, such as the Chinchilla scaling laws, which do not account for inference costs. It modifies these laws to determine the optimal model size and training data size considering both training and inference demands. The study validates the modified scaling laws through extensive experiments and ablates the curve fitting procedure, revealing that existing laws overestimate the impact of additional training data in extreme data regimes.",
+    "methodology": "The research modifies the Chinchilla scaling laws by incorporating inference costs into the optimization problem. It uses pre-training cross-entropy loss as a proxy for model quality and FLOPs as the unit of computational cost. The optimization problem is solved computationally using the Newton root-finding method. Real-world cost optimality is estimated by accounting for hardware utilization and costs.",
+    "experimental_setup": "The study involves training 47 models with the MPT architecture, ranging from 150M to 6B parameters, with data budgets from 10 to 10,000 tokens per parameter. The models are evaluated on a version of the open-source Evaluation Gauntlet, which includes tasks in world knowledge, commonsense reasoning, reading comprehension, language understanding, and symbolic problem-solving.",
+    "limitations": "The analysis assumes that LLM practitioners can estimate inference demand prior to training. The experimental data is limited in terms of model size (up to 6B parameters) and the number of training runs (47 vs. 400 in the Chinchilla paper). The real-world cost estimation model simplifies hardware utilization and costs, leaving aside latency requirements and assuming MFU and cost per FLOP do not depend on model size, configuration, or sequence length.",
+    "future_research_directions": "Future research directions include exploring scaling laws beyond 10,000 tokens per parameter and at larger model sizes. Further work is needed to develop scaling laws that apply precisely at a wide range of ratios and to understand the limits of scaling law extrapolation. Additional research is also suggested to explore the minimum data required to accurately fit scaling laws coefficients."
+  }
 }
