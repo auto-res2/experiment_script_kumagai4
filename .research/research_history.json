@@ -23,5 +23,8 @@
     "experimental_setup": "The study involves training 47 models with the MPT architecture, ranging from 150M to 6B parameters, with data budgets from 10 to 10,000 tokens per parameter. The models are evaluated on a version of the open-source Evaluation Gauntlet, which includes tasks in world knowledge, commonsense reasoning, reading comprehension, language understanding, and symbolic problem-solving.",
     "limitations": "The analysis assumes that LLM practitioners can estimate inference demand prior to training. The experimental data is limited in terms of model size (up to 6B parameters) and the number of training runs (47 vs. 400 in the Chinchilla paper). The real-world cost estimation model simplifies hardware utilization and costs, leaving aside latency requirements and assuming MFU and cost per FLOP do not depend on model size, configuration, or sequence length.",
     "future_research_directions": "Future research directions include exploring scaling laws beyond 10,000 tokens per parameter and at larger model sizes. Further work is needed to develop scaling laws that apply precisely at a wide range of ratios and to understand the limits of scaling law extrapolation. Additional research is also suggested to explore the minimum data required to accurately fit scaling laws coefficients."
-  }
+  },
+  "add_queries": [
+    "vision"
+  ]
 }
