@@ -1,0 +1,87 @@
+name: AIRAS Experiment Execution
+
+on:
+  workflow_dispatch:
+    inputs:
+      experiment_name:
+        description: 'Experiment name'
+        required: false
+        default: 'airas_experiment'
+
+jobs:
+  run-experiment:
+    name: Run AIRAS Experiment
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+          cache: "pip"
+      
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-dev
+      
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip list  # Show installed packages
+      
+      - name: Create experiment directories
+        run: |
+          mkdir -p logs
+          mkdir -p results
+          mkdir -p models
+      
+      - name: Run experiment
+        run: |
+          echo "Starting AIRAS experiment at $(date)"
+          python src/main.py > logs/output.txt 2> logs/error.txt
+          EXIT_CODE=$?
+          echo "Experiment completed with exit code: $EXIT_CODE"
+          
+          # Always save some output even if experiment fails
+          if [ ! -s logs/output.txt ]; then
+            echo "No output generated" > logs/output.txt
+          fi
+          
+          if [ ! -s logs/error.txt ]; then
+            echo "No errors" > logs/error.txt
+          fi
+        continue-on-error: true
+      
+      - name: Generate summary
+        if: always()
+        run: |
+          echo "=== Experiment Summary ===" > logs/summary.txt
+          echo "Date: $(date)" >> logs/summary.txt
+          echo "Python Version: $(python --version)" >> logs/summary.txt
+          echo "PyTorch Version: $(python -c 'import torch; print(torch.__version__)')" >> logs/summary.txt
+          echo "" >> logs/summary.txt
+          echo "Output preview:" >> logs/summary.txt
+          head -50 logs/output.txt >> logs/summary.txt
+          echo "" >> logs/summary.txt
+          echo "Error preview:" >> logs/summary.txt
+          head -20 logs/error.txt >> logs/summary.txt
+      
+      - name: Upload all results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: experiment-artifacts
+          path: |
+            logs/**
+            results/**
+            models/**
+            *.png
+            *.pdf
+            *.csv
+          retention-days: 7
